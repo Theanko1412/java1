@@ -13,11 +13,7 @@ public class Collection {
      * @return   true if collection contains no elements.
      */
     public boolean isEmpty() {
-        if(this.size() == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return this.size() == 0;
     }
 
     /**
@@ -62,8 +58,8 @@ public class Collection {
      * @throws UnsupportedOperationException ? not sure when
      */
     public Object[] toArray() {
-        Object[] array = new Object[this.size()];
-        return array;
+        if (this.size() == 0) throw new UnsupportedOperationException("Collection cannot be null!");
+        return new Object[this.size()];
     }
 
     /**
@@ -81,11 +77,11 @@ public class Collection {
     public void addAll(Collection other) {
 
         class Processor extends hr.fer.oprpp1.custom.collections.Processor {
+            @Override
             public void process(Object object) {
                 add(object);
             }
         }
-
         other.forEach(new Processor());
     }
 
