@@ -8,6 +8,6 @@
 /httpRequests/
 # idea junk
 .idea/
-/target
+*/target
 *.zip
 *.iml
