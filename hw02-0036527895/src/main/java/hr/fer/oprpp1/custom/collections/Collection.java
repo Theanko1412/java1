@@ -29,12 +29,10 @@ public interface Collection {
         if(col.isEmpty()) throw new NullPointerException("Given collection is empty!");
 
         ElementsGetter elementsGetter = col.createElementsGetter();
-        Tester t = new EvenIntegerTester();
-        Object nextElement;
 
         do {
-            nextElement = elementsGetter.getNextElement();
-            if(t.test(nextElement)) this.add(nextElement);
+            Object nextElement = elementsGetter.getNextElement();
+            if(tester.test(nextElement)) this.add(nextElement);
         } while(elementsGetter.hasNextElement());
     }
 

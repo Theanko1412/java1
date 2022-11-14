@@ -9,7 +9,7 @@ public class StackDemo {
     public static void main(String[] args) {
         Object[] elements = args[0].split(" ");
         String[] operators = new String[]{"+", "-", "/", "*", "%"};
-        for(Object element : elements) System.out.println(element.toString());
+        //for(Object element : elements) System.out.println(element.toString());
         ObjectStack objectStack = new ObjectStack();
 
         for(Object element : elements) {
