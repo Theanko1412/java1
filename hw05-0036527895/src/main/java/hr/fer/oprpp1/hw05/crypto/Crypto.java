@@ -28,9 +28,9 @@ public class Crypto {
         if(!(args[0].equals("checksha") || args[0].equals("encrypt") || args[0].equals("decrypt"))) throw new IllegalArgumentException("I dont know other than checksha, encrypt, decrypt...");
 
         switch (args[0]) {
-            case "checksha": Checksha(args[1]);
-            case "encrypt": Encrypt(args[1], args[2]);
-            case "decrypt": Decrypt(args[1], args[2]);
+            case "checksha" -> Checksha(args[1]);
+            case "encrypt" -> Encrypt(args[1], args[2]);
+            case "decrypt" -> Decrypt(args[1], args[2]);
         }
     }
 
