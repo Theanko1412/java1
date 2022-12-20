@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 import static java.lang.System.exit;
 
@@ -29,20 +26,26 @@ public class DatabaseDemo {
         while(true) {
             System.out.print("> ");
             String input = in.nextLine().strip();
+            String[] showing = null;
             if(input.startsWith("query ")) {
                 input = input.replace("query ", "");
+                if(input.contains(" showing ")) {
+                    String[] splitted = input.split(" showing ");
+                    input = splitted[0];
+                    showing = splitted[1].split(", ");
+                }
                 QueryParser queryParser = new QueryParser(input);
-                queryFormater(queryParser);
+                queryFormater(queryParser, showing);
             } else if(input.equals("exit")) {
                 System.out.println("Goodbye!");
                 exit(0);
             } else {
-                System.out.println("Avaliable arguments: query [String], exit");
+                System.out.println("Avaliable arguments: query [String] *showing*, exit");
             }
         }
     }
 
-    static void queryFormater(QueryParser queryParser) {
+    static void queryFormater(QueryParser queryParser, String[] showing) {
         int maxSizeJmbag = 0;
         int maxSizeLastName = 0;
         int maxSizeFirstName = 0;
@@ -79,40 +82,79 @@ public class DatabaseDemo {
         }
 
         for(StudentRecord s : records) {
-            if(s.getJmbag().length() > maxSizeJmbag) maxSizeJmbag = s.getJmbag().length();
-            if(s.getLastName().length() > maxSizeLastName) maxSizeLastName = s.getLastName().length();
-            if(s.getFirstName().length() > maxSizeFirstName) maxSizeFirstName = s.getFirstName().length();
+            if(showing == null) {
+                if(s.getJmbag().length() > maxSizeJmbag) maxSizeJmbag = s.getJmbag().length();
+                if(s.getLastName().length() > maxSizeLastName) maxSizeLastName = s.getLastName().length();
+                if(s.getFirstName().length() > maxSizeFirstName) maxSizeFirstName = s.getFirstName().length();
+            } else {
+                if(Arrays.asList(showing).contains("jmbag")) {
+                    if(s.getJmbag().length() > maxSizeJmbag) maxSizeJmbag = s.getJmbag().length();
+                } else if(Arrays.asList(showing).contains("firstName")) {
+                    if(s.getFirstName().length() > maxSizeFirstName) maxSizeFirstName = s.getFirstName().length();
+                } else if(Arrays.asList(showing).contains("lastName")) {
+                    if(s.getLastName().length() > maxSizeLastName) maxSizeLastName = s.getLastName().length();
+                }
+            }
         }
-        printHeader(maxSizeJmbag, maxSizeLastName, maxSizeFirstName);
+        printHeader(maxSizeJmbag, maxSizeLastName, maxSizeFirstName, showing);
 
-        for(StudentRecord s : records) {
-            System.out.println(
-                    "| " +
-                    s.getJmbag() + String.join("", Collections.nCopies(maxSizeJmbag-s.getJmbag().length(), " ")) + " | " +
-                    s.getLastName() + String.join("", Collections.nCopies(maxSizeLastName-s.getLastName().length(), " ")) + " | " +
-                    s.getFirstName() + String.join("", Collections.nCopies(maxSizeFirstName-s.getFirstName().length(), " ")) + " | " +
-                    s.getFinalGrade() + " |");
+        if(showing == null) {
+            for(StudentRecord s : records) {
+                System.out.println(
+                        "| " +
+                        s.getJmbag() + String.join("", Collections.nCopies(maxSizeJmbag-s.getJmbag().length(), " ")) + " | " +
+                        s.getLastName() + String.join("", Collections.nCopies(maxSizeLastName-s.getLastName().length(), " ")) + " | " +
+                        s.getFirstName() + String.join("", Collections.nCopies(maxSizeFirstName-s.getFirstName().length(), " ")) + " | " +
+                        s.getFinalGrade() + " |");
+            }
+        } else {
+            for(StudentRecord s : records) {
+                System.out.printf("| ");
+                for(String table : showing) {
+                    switch (table) {
+                        case "jmbag" -> System.out.printf("%s", s.getJmbag() + String.join("", Collections.nCopies(maxSizeJmbag-s.getJmbag().length(), " ")));
+                        case "lastName" -> System.out.printf("%s", s.getLastName() + String.join("", Collections.nCopies(maxSizeLastName-s.getLastName().length(), " ")));
+                        case "firstName" -> System.out.printf("%s", s.getFirstName() + String.join("", Collections.nCopies(maxSizeFirstName-s.getFirstName().length(), " ")));
+                        case "grade" -> System.out.printf("%s", s.getFinalGrade());
+                    }
+                    System.out.printf(" | ");
+                }
+                System.out.printf("\n");
+            }
         }
 
-        printHeader(maxSizeJmbag, maxSizeLastName, maxSizeFirstName);
+        printHeader(maxSizeJmbag, maxSizeLastName, maxSizeFirstName, showing);
 
         System.out.println("Records selected: " + records.size());
     }
 
-    static void printHeader(int maxSizeJmbag, int maxSizeLastName, int maxSizeFirstName) {
+    static void printHeader(int maxSizeJmbag, int maxSizeLastName, int maxSizeFirstName, String[] showing) {
         String plus = "+";
         String equals = "=";
 
-        System.out.println(
-                plus +
-                String.join("", Collections.nCopies(maxSizeJmbag+2, equals)) +
-                plus +
-                String.join("", Collections.nCopies(maxSizeLastName+2, equals)) +
-                plus +
-                String.join("", Collections.nCopies(maxSizeFirstName+2, equals)) +
-                plus +
-                String.join("", Collections.nCopies(3, equals)) +
-                plus
-        );
+        if(showing == null) {
+            System.out.println(
+                    plus +
+                            String.join("", Collections.nCopies(maxSizeJmbag+2, equals)) +
+                            plus +
+                            String.join("", Collections.nCopies(maxSizeLastName+2, equals)) +
+                            plus +
+                            String.join("", Collections.nCopies(maxSizeFirstName+2, equals)) +
+                            plus +
+                            String.join("", Collections.nCopies(3, equals)) +
+                            plus
+            );
+        } else {
+            for(String table : showing) {
+                System.out.printf("%s", plus);
+                switch (table) {
+                    case "jmbag" -> System.out.printf("%s", String.join("", Collections.nCopies(maxSizeJmbag + 2, equals)));
+                    case "firstName" -> System.out.printf("%s", String.join("", Collections.nCopies(maxSizeFirstName + 2, equals)));
+                    case "lastName" -> System.out.printf("%s", String.join("", Collections.nCopies(maxSizeLastName + 2, equals)));
+                    case "grade" -> System.out.printf("%s", String.join("", Collections.nCopies(3, equals)));
+                }
+            }
+            System.out.printf("%s\n", plus);
+        }
     }
 }

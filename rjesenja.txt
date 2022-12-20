@@ -1,0 +1,73 @@
+1.zad
+
+U prvom zadatku sam u listu operatora dodao "bigger" i "cubed". Zatim sam u case switch dodao jos dva uvjeta:
+
+case "bigger" -> {
+                        try {
+                        //dobio sam na ulazu bigger ali zelim vidjeti sljedeci element za usporedbu
+                            arg1 = Integer.parseInt(elements[count+1].toString());
+                            if(arg1 > arg2) {
+                                objectStack.push(arg1);
+                            } else {
+                                objectStack.push(arg2);
+                            }
+                        } catch (IndexOutOfBoundsException e) {
+                            System.out.println("Given operator bigger without second argument!");
+                        }
+                        //uvecam petlju za +1 da preskocim element koji sam gore vec procitao
+                        count++;
+                    }
+case "cubed" -> objectStack.push(arg2*arg2*arg2);
+
+Zatim sam jos promijenio citanje argumenata iz razloga da ukoliko nade jedan od dodanih operanada bigger ili cubed da ne
+pojede prethodni element sa stacka nego samo jedan koji mu je potreban:
+
+if(!element.equals("bigger") && !element.equals("cubed")) {
+                    arg1 = Integer.parseInt(objectStack.pop().toString());
+                } else arg1 = 0;
+
+
+====================================================================
+2.zad
+====================================================================
+3.zad
+
+U trecem zadatku sam modificirao input tako da ukoliko pronade izraz " showing " uzima sve daljnje parametre u listu.
+
+if(input.contains(" showing ")) {
+                    String[] splitted = input.split(" showing ");
+                    input = splitted[0];
+                    showing = splitted[1].split(", ");
+                }
+
+Zatim sam tu listu slao dalje funkcijama te ih modificirao ako je ta lista null koristim standardni ispis a ako nije radim poseban formating na ovakav način:
+
+if(showing == null) {
+            for(StudentRecord s : records) {
+                System.out.println(
+                        "| " +
+                        s.getJmbag() + String.join("", Collections.nCopies(maxSizeJmbag-s.getJmbag().length(), " ")) + " | " +
+                        s.getLastName() + String.join("", Collections.nCopies(maxSizeLastName-s.getLastName().length(), " ")) + " | " +
+                        s.getFirstName() + String.join("", Collections.nCopies(maxSizeFirstName-s.getFirstName().length(), " ")) + " | " +
+                        s.getFinalGrade() + " |");
+            }
+        } else {
+            for(StudentRecord s : records) {
+                System.out.printf("| ");
+                for(String table : showing) {
+                    switch (table) {
+                        case "jmbag" -> System.out.printf("%s", s.getJmbag() + String.join("", Collections.nCopies(maxSizeJmbag-s.getJmbag().length(), " ")));
+                        case "lastName" -> System.out.printf("%s", s.getLastName() + String.join("", Collections.nCopies(maxSizeLastName-s.getLastName().length(), " ")));
+                        case "firstName" -> System.out.printf("%s", s.getFirstName() + String.join("", Collections.nCopies(maxSizeFirstName-s.getFirstName().length(), " ")));
+                        case "grade" -> System.out.printf("%s", s.getFinalGrade());
+                    }
+                    System.out.printf(" | ");
+                }
+                System.out.printf("\n");
+            }
+        }
+
+Slično tako i za ispis headera i footera. Program mi radi za sve opcije jmbag, grade, firstName, lastName pojedinačno no baca exception ukoliko mu predam lastName ili firstName u kombinaciji sa nekim drugim stupcem.
+Nisam uspio pronaci gresku pa radi polovicno
+
+====================================================================
